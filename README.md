@@ -155,6 +155,15 @@ Auto Scaling Group可以通过配置启动EC2实例的Launch Config、扩容策�
 
 本项目通过JMeter(脚本`jmeter_test.jmx`在子项目[webapp]()中)进行压测，可以实现EC2实例的自动扩缩容。
 
+## Certificate
+
+本部分通过手动配置实现。
+
+由于需要通过HTTPS访问服务，SSL协议需要认证证书，项目通过AWS Certificate Manager可以申请到一个受限的证书，需要浏览器额外信任，如下：
+![](pic/certificate/certificate_dev.png)
+
+出于安全考虑EC2实例和RDS数据库的连接也要加上SSL层，为了让RDS实例信任EC2实例，可以通过下载AWS提供的[根证书](https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem)，生成Java可用的Java Keystore文件，在Web应用连接RDS时带上证书即可完成认证，获得更加安全的SSL加密连接，本项目使用的`clientkeystore.jks`放在子项目[webapp]()中。
+
 ## Route53
 
 本部分在子项目[infrastructure]()中实现，外加手动。
@@ -169,8 +178,7 @@ Route53是AWS中用于管理域名的组件，当然管理域名首先需要有�
 
 子域名`dev.example.me`的配置(`prod.example.me`类似)如下：
 ![](pic/route53/route53_dev_domain.png)
-其中A记录是IPv4地址，这里配置的是之前介绍的Load Balancer的地址，如此我们便可以通过域名`dev.example.me`来访问项目中运行在EC2实例上的Web应用了！CNAME记录配置的是SSL证书，用于HTTPS访问服务时的证书认证，证书通过AWS Certificate Manager可以申请到一个受限的证书，需要浏览器额外信任，如下：
-![](pic/certificate/certificate_dev.png)
+其中A记录是IPv4地址，这里配置的是之前介绍的Load Balancer的地址，如此我们便可以通过域名`dev.example.me`来访问项目中运行在EC2实例上的Web应用了！CNAME记录配置的是之前申请的SSL证书，用于HTTPS访问服务时的证书认证。
 
 至此，便有了项目的一个基本的架构，可以外部通过HTTPS访问Web服务，Postman修改用户信息接口测试如下：
 
@@ -240,6 +248,8 @@ CI/CD即持续集成、持续部署，在持续集成环境中，开发人员将
 
 为了实现CI/CD，本项目使用了Github的Workflow，在子项目[webapp]()、[ami]()、[serverless]()这三个需要CI/CD的仓库中，都添加了`.github/workflows`目录，其中的yml文件可以通过特定的Github动作触发相应的动作，进而达到CI/CD的目标。具体的workflow代码在各子项目下，基本思路都是发起pull
 request便进行编译、测试检查，合并到主分支则进行自动部署，其中Web应用是会将打包的jar包上传到S3存储桶，并触发AWS的CodeDeploy组件自动部署；AMI镜像则是调动AWS根据hcl代码build出镜像并存储；Serverless服务则是将代码打包上传到S3存储桶，触发Lambda服务运行新的代码。
+
+其中CodeDeploy需要知道拿到S3上的代码包应该如何启动或者关闭应用，所以需要在子项目[webapp]()中给CodeDeploy提供这样的信息，这些信息存储在`appspec.yml`和`scripts`目录下，告诉了CodeDeploy启动、关闭应用的具体步骤。
 
 上文IAM介绍中已经说明了如何给Github分配进行CI/CD时所需要的权限，随后在对应的仓库设置里配置好用于账户认证的ACCESS_KEY和SECRET_KEY即可，通过这样的认证方式便可以让Github的Workflow执行AWS命令时有对应的权限，Github环境变量的配置如下：
 ![](pic/cicd/action_secrets.png)
