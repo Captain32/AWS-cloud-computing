@@ -72,7 +72,7 @@ aws_secret_access_key = *************
 
 ## Web应用
 
-本部分在子项目[webapp](https://github.com/Captain32/webapp)中实现。使用Java的SpringBoot框架实现了若干Restful风格的Http接口，功能包括用户信息注册、修改、查询，文件上传、下载、发送邮件，由于Web应用在AWS的EC2实例上运行，所以其中不乏与AWS的RDS、S3、SNS等的交互。
+本部分在子项目[webapp](https://github.com/Captain32/webapp)中实现。使用Java的SpringBoot框架实现了若干Restful风格的Http接口，功能包括用户信息注册、修改、查询，文件上传、下载，发送邮件，由于Web应用在AWS的EC2实例上运行，所以其中不乏与AWS的RDS、S3、SNS等的交互。
 
 ## VPC(虚拟私有云——网络部分)
 
