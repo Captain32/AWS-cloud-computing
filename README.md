@@ -27,6 +27,9 @@ AWS是云计算的行业领头羊，其云平台上提供了丰富的组件供�
 * [app-cicd](https://github.com/Captain32/app-cicd) : Web应用CI/CD权限策略配置、创建(Terraform实现)
 * [serverless](https://github.com/Captain32/serverless) : 无服务器计算代码(Python实现)
 
+本项目总体架构鸟瞰图如下：
+![](pic/bird_view/bird_view.JPG)
+
 ## 前置工作
 
 1. 本机安装AWS命令行工具
