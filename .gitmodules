@@ -1,3 +1,18 @@
 [submodule "webapp"]
 	path = webapp
 	url = https://github.com/Captain32/webapp.git
+[submodule "infrastructure"]
+	path = infrastructure
+	url = https://github.com/Captain32/infrastructure.git
+[submodule "ami"]
+	path = ami
+	url = https://github.com/Captain32/ami.git
+[submodule "ami-infrastructure"]
+	path = ami-infrastructure
+	url = https://github.com/Captain32/ami-infrastructure.git
+[submodule "app-cicd"]
+	path = app-cicd
+	url = https://github.com/Captain32/app-cicd.git
+[submodule "serverless"]
+	path = serverless
+	url = https://github.com/Captain32/serverless.git
