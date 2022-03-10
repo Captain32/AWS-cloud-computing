@@ -44,7 +44,7 @@ aws_secret_access_key = *************
 
 ## Web应用
 
-本部分在子项目[webapp]()中实现。使用Java的SpringBoot框架实现了若干Restful风格的Http接口，功能包括用户信息注册、修改、查询，文件上传、下载，接口功能较为简单，主要是为了对AWS各个组件的实践，由于Web应用在AWS的EC2实例上运行，所以其中不乏与AWS的RDS、S3、SNS等的交互。
+本部分在子项目[webapp](https://github.com/Captain32/webapp)中实现。使用Java的SpringBoot框架实现了若干Restful风格的Http接口，功能包括用户信息注册、修改、查询，文件上传、下载，接口功能较为简单，主要是为了对AWS各个组件的实践，由于Web应用在AWS的EC2实例上运行，所以其中不乏与AWS的RDS、S3、SNS等的交互。
 
 ## VPC
 
@@ -153,7 +153,7 @@ Auto Scaling Group可以通过配置启动EC2实例的Launch Config、扩容策�
 ![](pic/autoscaling/alarm_low.png)
 ![](pic/autoscaling/alarm_high.png)
 
-本项目通过JMeter(脚本`jmeter_test.jmx`在子项目[webapp]()中)进行压测，可以实现EC2实例的自动扩缩容。
+本项目通过JMeter(脚本`jmeter_test.jmx`在子项目[webapp](https://github.com/Captain32/webapp)中)进行压测，可以实现EC2实例的自动扩缩容。
 
 ## Certificate
 
@@ -162,7 +162,7 @@ Auto Scaling Group可以通过配置启动EC2实例的Launch Config、扩容策�
 由于需要通过HTTPS访问服务，SSL协议需要认证证书，项目通过AWS Certificate Manager可以申请到一个受限的证书，需要浏览器额外信任，如下：
 ![](pic/certificate/certificate_dev.png)
 
-出于安全考虑EC2实例和RDS数据库的连接也要加上SSL层，为了让RDS实例信任EC2实例，可以通过下载AWS提供的[根证书](https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem)，生成Java可用的Java Keystore文件，在Web应用连接RDS时带上证书即可完成认证，获得更加安全的SSL加密连接，本项目使用的`clientkeystore.jks`放在子项目[webapp]()中。
+出于安全考虑EC2实例和RDS数据库的连接也要加上SSL层，为了让RDS实例信任EC2实例，可以通过下载AWS提供的[根证书](https://s3.amazonaws.com/rds-downloads/rds-ca-2019-root.pem)，生成Java可用的Java Keystore文件，在Web应用连接RDS时带上证书即可完成认证，获得更加安全的SSL加密连接，本项目使用的`clientkeystore.jks`放在子项目[webapp](https://github.com/Captain32/webapp)中。
 
 ## Route53
 
@@ -242,14 +242,14 @@ CI/CD相关的Github账户和对应策略，如下：
 
 ## CI/CD
 
-本部分在子项目[webapp]()、[infrastructure]()、[ami]()、[ami-infrastructure]()、[app-cicd]()、[serverless]()中实现。
+本部分在子项目[webapp](https://github.com/Captain32/webapp)、[infrastructure]()、[ami]()、[ami-infrastructure]()、[app-cicd]()、[serverless]()中实现。
 
 CI/CD即持续集成、持续部署，在持续集成环境中，开发人员将会频繁的提交代码到主干。这些新提交在最终合并到主线之前，都需要通过编译和自动化测试流进行验证。持续部署则是合并到主干的代码会自动化的部署在服务主机上，达到服务随代码自动更新。
 
-为了实现CI/CD，本项目使用了Github的Workflow，在子项目[webapp]()、[ami]()、[serverless]()这三个需要CI/CD的仓库中，都添加了`.github/workflows`目录，其中的yml文件可以通过特定的Github动作触发相应的动作，进而达到CI/CD的目标。具体的workflow代码在各子项目下，基本思路都是发起pull
+为了实现CI/CD，本项目使用了Github的Workflow，在子项目[webapp](https://github.com/Captain32/webapp)、[ami]()、[serverless]()这三个需要CI/CD的仓库中，都添加了`.github/workflows`目录，其中的yml文件可以通过特定的Github动作触发相应的动作，进而达到CI/CD的目标。具体的workflow代码在各子项目下，基本思路都是发起pull
 request便进行编译、测试检查，合并到主分支则进行自动部署，其中Web应用是会将打包的jar包上传到S3存储桶，并触发AWS的CodeDeploy组件自动部署；AMI镜像则是调动AWS根据hcl代码build出镜像并存储；Serverless服务则是将代码打包上传到S3存储桶，触发Lambda服务运行新的代码。
 
-其中CodeDeploy需要知道拿到S3上的代码包应该如何启动或者关闭应用，所以需要在子项目[webapp]()中给CodeDeploy提供这样的信息，这些信息存储在`appspec.yml`和`scripts`目录下，告诉了CodeDeploy启动、关闭应用的具体步骤。
+其中CodeDeploy需要知道拿到S3上的代码包应该如何启动或者关闭应用，所以需要在子项目[webapp](https://github.com/Captain32/webapp)中给CodeDeploy提供这样的信息，这些信息存储在`appspec.yml`和`scripts`目录下，告诉了CodeDeploy启动、关闭应用的具体步骤。
 
 上文IAM介绍中已经说明了如何给Github分配进行CI/CD时所需要的权限，随后在对应的仓库设置里配置好用于账户认证的ACCESS_KEY和SECRET_KEY即可，通过这样的认证方式便可以让Github的Workflow执行AWS命令时有对应的权限，Github环境变量的配置如下：
 ![](pic/cicd/action_secrets.png)
@@ -319,9 +319,9 @@ SES服务是AWS提供的发送邮件的服务，通过为`example.me`域名在SE
 
 ## 日志(Log)&打点(Metric)
 
-本部分在子项目[webapp]()和[ami]()中实现。
+本部分在子项目[webapp](https://github.com/Captain32/webapp)和[ami]()中实现。
 
-AWS的日志和打点组件需要在服务器上安装`amazon-cloudwatch-agent`，这里放在AMI镜像中进行安装。对于CloudWatch的配置则放在子项目[webapp]()的`cloudwatch-config.json`中，配置了打点、日志收集的间隔，以及日志流的存放位置。打点Metric的数据记录则使用StatsD包提供的count、timer等类型在应用Java代码中完成，详情见代码。效果如下：
+AWS的日志和打点组件需要在服务器上安装`amazon-cloudwatch-agent`，这里放在AMI镜像中进行安装。对于CloudWatch的配置则放在子项目[webapp](https://github.com/Captain32/webapp)的`cloudwatch-config.json`中，配置了打点、日志收集的间隔，以及日志流的存放位置。打点Metric的数据记录则使用StatsD包提供的count、timer等类型在应用Java代码中完成，详情见代码。效果如下：
 ![](pic/log/log_group.png)
 ![](pic/log/log_stream.png)
 ![](pic/metric/metric.png)
